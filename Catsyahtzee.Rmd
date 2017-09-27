@@ -71,25 +71,23 @@ x
 We will need to sort this. The following function is called a *Bubble Sort*. Comment on every part of the code to explain what it is doing:
 
 ```
-# bubble_sort is calling on a previously named group called vec. Inside bubble_sort it is defining a value called "no_passes" which equals 0. The while function executes a loop function while the identified value is true. In this case while the value is 1 the following loop executes. The loop is if no_swaps=0 then for every value j in the first value of the matrix to the length of vec minus 1 minus the value of no_passes (value=0). If these conditions are satisfied than another loop executes that states for every value j in vec that is one unit greater than the previous j then another loop executes. Renaming each j value of vec to s, and the j value of vec equals the same value moved over one unit which is assigned again to s creating a loop. Then no_swaps is assigned a new value of 0 +1. No_passes then adds one more unit to 0 if no_swaps equals 0. Break then does not return a value. 
+#bubblesort is a function that is applied to x if the length of x is less 2 then it will return x. For the last value in length of x to the second row then execute the next loop. The following loop is for the first unit in row 1 to the next to last then execute the next loop. If the first value in x is greater than the first value plus one then swap the pair by saving the first, adding one to it and placing it back into the first +1. Return x, allows it to print the value. 
 
-# Starting from the inside loop for every value j in vec that is one unit greater than the previous j then executes
-bubble_sort = function(vec) {
-    no_passes = 0
-    while(1) {
-        no_swaps = 0
-        for (j in 1 : (length(vec) - 1 - no_passes)) {
-            if (vec[j] > vec[j + 1]) {
-                s = vec[j]
-                vec[j] = vec[j+1]
-                vec[j+1] = s
-                no_swaps = no_swaps + 1
-            }
-        }
-        no_passes = no_passes + 1
-        if(no_swaps == 0) break
-    }
-    vec
+bubblesort <- function(x) {
+# x is initially the input vector and will be
+# modified to form the output
+if (length(x) < 2) return (x)
+# last is the last element to compare with
+for(last in length(x):2) {
+for(first in 1:(last - 1)) {
+if(x[first] > x[first + 1]) { # swap the pair
+save <- x[first]
+x[first] <- x[first + 1]
+x[first + 1] <- save
+}
+}
+}
+return (x)
 }
 ```
 
@@ -211,7 +209,7 @@ if (x[1]==x[5]){
 } else hand="Chance"
 hand
  
-x <- c(1,2,3,4,4)
+x <- c(1,2,3,6,6)
 if (x[1]==x[5]){
   hand="Yahtzee"
 } else if (x[1]==x[4] | x[2]==x[5]) {
@@ -222,7 +220,7 @@ if (x[1]==x[5]){
     hand="3ofKind"  
 }  else if (x[1]!=x[2] & x[2]!=x[3] & x[3]!=x[4] & x[4]!=x[5]) {
     hand="Large Straight"
-}  else if (x[1]!=x[2] & x[2]!=x[3] & x[3]!=x[4] | x[2]!=x[3] & x[3]!=x[4] & x[4]!=x[5]  ) {
+}  else if (x[4]==x[3]+1 & x[3]==x[2]+1 & x[2]==x[1]+1 | x[5]==x[4]+1 & x[4]==x[3]+1 & x[3]==x[2]+1) {
     hand="Small Straight"
 } else hand="Chance"
 hand
@@ -252,7 +250,83 @@ Small Straight    .1235
 Chance            .6326
 -------------------------------------------------------
 
+```{r}
 
+sim <- matrix(, nrow=100000, ncol=5)
+
+for (i in 1:nrow(sim))
+  {
+  sim[i,] <- sample(1:6, size=5, replace=T)
+}
+bubblesort <- function(sim) {
+# x is initially the input vector and will be
+# modified to form the output
+if (length(sim) < 2) return (sim)
+# last is the last element to compare with
+for(last in length(sim):2) {
+for(first in 1:(last - 1)) {
+if(sim[first] > sim[first + 1]) { # swap the pair
+save <- sim[first]
+sim[first] <- sim[first + 1]
+sim[first + 1] <- save
+}
+}
+}
+return (sim)
+}
+
+for (i in 1: nrow(sim)){
+  sim[i,] <-bubblesort(sim[i,])
+}
+```
+
+```{r}
+x<- sim
+hand<- function(x){
+  if (x[1]==x[5]){
+  hand="Yahtzee"
+  } else if (x[1]==x[4] | x[2]==x[5]) {
+    hand="4ofKind"
+  }  else if (x[1]==x[3] & x[4]==x[5] | x[1]==x[2] & x[3]==x[5]) {
+    hand="Full House" 
+  }  else if (x[1]==x[3] | x[2]==x[4] | x[3]==x[5] ) {
+    hand="3ofKind"  
+  }  else if (x[5]==x[4]+1 & x[4]==x[3]+1 & x[3]==x[2]+1 & x[2]==x[1]+1) {
+    hand="Large Straight"
+  }  else if (x[4]==x[3]+1 & x[3]==x[2]+1 & x[2]==x[1]+1 | x[5]==x[4]+1 & x[4]==x[3]+1 & x[3]==x[2]+1) {
+    hand="Small Straight"
+  } else hand="Chance"
+  return(hand)
+}
+
+x<- as.data.frame(x)
+x$hand<-0
+
+for(i in 1:nrow(x)){
+  x$hand[i] <- hand(x[i,])
+}
+
+library(dplyr)
+prob<- x %>% group_by(hand) %>% summarise (n = n()) %>%  mutate(Probability = n / sum(n)) 
+prob
+```
+--------------------------------
+Hand              Probability
+----------------- --------------
+Yahtzee           .0008
+
+Four of a Kind    .0193
+
+Three of a Kind   .1543
+
+Full House        .0386
+
+Large Straight    .0309
+
+Small Straight    .1235
+
+Chance            .6326
+-------------------------------------------------------
 
 ## Part II: PHP 2560 Only
 
