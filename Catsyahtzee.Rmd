@@ -41,7 +41,8 @@ sample(1:6, size=1, replace=T)
 Using a loop create a matrix of 10 rolls all consisting of 5 dice in each roll. 
 
 ```{r}
-x <- matrix(, nrow=10, ncol=5)
+x <- matrix(1, nrow=10, ncol=5)
+
 for (i in 1:10)
   {
   x[i,] <- sample(1:6, size=5, replace=T)
@@ -167,47 +168,7 @@ hand
 The above code lays this out for Yahtzee and 4 of a kind. Find statements that work for the rest. Make sets of x and test them to make sure they work.
 
 ```{r}
-x <- c(2,2,2,2,2)
 
-if (x[1]==x[5]){
-  hand="Yahtzee"
-} else if (x[1]==x[4] | x[2]==x[5]) {
-    hand="4ofKind"
-} else hand="Chance"
-hand
-
-x <- c(1,1,1,1,5)
-if (x[1]==x[5]){
-  hand="Yahtzee"
-} else if (x[1]==x[4] | x[2]==x[5]) {
-    hand="4ofKind"
-} else hand="Chance"
-hand
-
-x <- c(1,1,1,5,5)
-if (x[1]==x[5]){
-  hand="Yahtzee"
-} else if (x[1]==x[4] | x[2]==x[5]) {
-    hand="4ofKind"
-}  else if (x[1]==x[3] | x[2]==x[4] | x[3]==x[5] ) {
-    hand="3ofKind"  
-}  else if (x[1]==x[3] & x[4]==x[5] | x[1]==x[2] & x[3]==x[5]) {
-    hand="Full House" 
-} else hand="Chance"
-hand
-
-x <- c(1,1,1,5,5)
-if (x[1]==x[5]){
-  hand="Yahtzee"
-} else if (x[1]==x[4] | x[2]==x[5]) {
-    hand="4ofKind"
-}  else if (x[1]==x[3] & x[4]==x[5] | x[1]==x[2] & x[3]==x[5]) {
-    hand="Full House" 
-}  else if (x[1]==x[3] | x[2]==x[4] | x[3]==x[5] ) {
-    hand="3ofKind"  
-} else hand="Chance"
-hand
- 
 x <- c(1,2,3,6,6)
 if (x[1]==x[5]){
   hand="Yahtzee"
@@ -217,7 +178,7 @@ if (x[1]==x[5]){
     hand="Full House" 
 }  else if (x[1]==x[3] | x[2]==x[4] | x[3]==x[5] ) {
     hand="3ofKind"  
-}  else if (x[1]!=x[2] & x[2]!=x[3] & x[3]!=x[4] & x[4]!=x[5]) {
+}  else if (x[5]==x[4]+1 & x[4]==x[3]+1 & x[3]==x[2]+1 & x[2]==x[1]+1){
     hand="Large Straight"
 }  else if (x[4]==x[3]+1 & x[3]==x[2]+1 & x[2]==x[1]+1 | x[5]==x[4]+1 & x[4]==x[3]+1 & x[3]==x[2]+1) {
     hand="Small Straight"
@@ -251,7 +212,7 @@ Chance            .6326
 
 ```{r}
 
-sim <- matrix(, nrow=100000, ncol=5)
+sim <- matrix(NA, nrow=100000, ncol=5)
 
 for (i in 1:nrow(sim))
   {
